@@ -1,3 +1,11 @@
+# References for MediaPipe Webcam Handtracking: 
+# https://developers.google.com/mediapipe/solutions/vision/hand_landmarker 
+# https://mediapipe.readthedocs.io/en/latest/solutions/hands.html
+
+# References for Serial Communication:
+# https://pyserial.readthedocs.io/en/latest/pyserial_api.html 
+# https://projecthub.arduino.cc/ansh2919/serial-communication-between-python-and-arduino-663756 
+
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -47,6 +55,7 @@ with mp_hands.Hands(
                 # Send coordinates over serial
                 if x is not None and y is not None:
                     ser.write(f"{x},{y}\n".encode())  # Send coordinates as string
+                # print(x,y)
 
         cv2.imshow('MediaPipe Hands', frame)
 
