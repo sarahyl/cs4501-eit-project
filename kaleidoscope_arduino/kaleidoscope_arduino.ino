@@ -6,11 +6,8 @@ void setup() {
 }
 
 void loop() {
-
-  if ( Serial.available() )   // When the IMU is ready to send data,
-  {
-    x = Serial.readString();  
+   while (!Serial.available()); // check until there is data available
+    String x = Serial.readString();  
     Serial.println(x);
-    delay(10);           // Wait 10 milliseconds
-  }
+    delay(10);    
 }

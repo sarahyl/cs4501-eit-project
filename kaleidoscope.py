@@ -19,7 +19,7 @@ mp_hands = mp.solutions.hands
 cap = cv2.VideoCapture(0)
 
 # Initialize serial connection
-ser = serial.Serial('COM3', 9600)  # Adjust COM port accordingly
+ser = serial.Serial(port='COM10',  baudrate=115200)  # Adjust COM port accordingly
 
 # Function to extract fingertip coordinates
 def extract_fingertip_coordinates(landmarks):
