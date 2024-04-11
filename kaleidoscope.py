@@ -69,7 +69,7 @@ try:
                     client_socket.sendall(packed_data)
                     
                     # Add a small delay if needed
-                    time.sleep(0.1)
+                    # time.sleep(0.1)
                 # Send coordinates over serial
                 # if x is not None and y is not None:
                 #     ser.write(f"{x},{y}\n".encode())  # Send coordinates as string

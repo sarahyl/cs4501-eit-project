@@ -52,6 +52,7 @@ void draw() {
 void drawFingertip(float x, float y) {
   // Draw a circle representing the fingertip
   fill(255, 0, 0);
+  stroke(255,0,0);
   ellipse(x, y, 20, 20);
 }
 
