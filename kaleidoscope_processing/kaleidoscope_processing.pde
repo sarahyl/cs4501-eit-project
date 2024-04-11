@@ -1,75 +1,51 @@
-import processing.serial.*;
-Serial myPort;
-String myString = null;
-int lf = 10;    // Linefeed in ASCII
-//float ax = 0;
-//float ay = 0;
-float dx = 0;
-float dy = 0;
-//float force = 0;
-float xPos = 0;
-float yPos = 0;
+import processing.net.*; 
+import java.nio.ByteBuffer; // Import ByteBuffer class
 
-FloatList xPosList;
-FloatList yPosList;
-//FloatList forceList;
-
+Server myServer;
+int PORT = 5204;
 
 void setup() {
-  size(1000, 700);
-  println(Serial.list());  // prints serial port list
-  String portName = Serial.list()[0];  // find the right one from the print port list (see the console output). Your port might not be the first one on the list. 
-  myPort = new Serial(this, portName, 115200);  // open the serial port  
-
-  // Lists storing x/y positions and force 
-  xPosList = new FloatList();  
-  yPosList = new FloatList();
-  //forceList = new FloatList();
-
-  // Initiate x/y cursor positions
-  xPos = width/2;
-  yPos = height/2;
+  size(200, 200);
+  
+  // Start a server on port 5204
+  myServer = new Server(this, PORT);
 }
 
 void draw() {
-  background(255);
-  stroke(0);
-
-  float gain = 5;  // TODO: Set Movement Gain that looks good to you. 
-  while (myPort.available() > 0) {
-    myString = myPort.readStringUntil(lf);
-    if (myString != null) {
-      float[] nums = float(split(myString, ','));
-      print(nums);
-      //if (nums.length == 3)
-      //{
-      //  dx = nums[0] / 1023.0;
-      //  dy = -nums[1] / 1023.0;
-      //  force = nums[2];
-      //}
+  // Check if a client is available
+  Client client = myServer.available();
+  if (client != null) {
+    // Read data from the client
+    while (client.available() >= 8) { // Assuming 16 bytes for 4 float values (1 float = 4 bytes), YOU NEED TO CHANGE THIS AND OTHER VARIABLES IN THIS SECTION BASED ON THE DATA YOU ARE SENDING FROM PYTHON
+      // Read the received bytes
+      byte[] bytes = new byte[8];
+      client.readBytes(bytes);
+      
+      // Decode the bytes to float values
+      float[] floatValues = decodeFloats(bytes, 2);
+      
+      // Print received float values
+      print("Received float values: ");
+      for (float value : floatValues) {
+        print(value + " ");
+      }
+      println();
     }
-  }   
-
-  xPos = xPos + dx * gain;
-  yPos = yPos + dy * gain;  
-
-  xPosList.append(xPos);
-  yPosList.append(yPos);  
-  //forceList.append(force/10);       // TODO: Change this to use values in forceList to be used as diameter
-
-  fill(0); // Sets the fill color
-  for (int i = 0; i < xPosList.size(); i++)
-  {
-    ellipse(xPosList.get(i), yPosList.get(i), 220, 220);    // Draw points in the list
-  }  
-  fill(255, 255, 0, 100);
-  ellipse(xPos, yPos, 30, 30);    // Draw a cursor
+    
+    // Close the client connection
+    // This code is commented out, but you can uncomment it based on some logic to close the python program if needed
+    //client.stop();
+  }
 }
 
-void keyPressed() {
-  xPosList.clear();
-  yPosList.clear();
-  //forceList.clear();
-  xPos = width/2;
-  yPos = height/2;
+float[] decodeFloats(byte[] bytes, int floatLength) {
+  // Create a ByteBuffer with the received bytes
+  ByteBuffer buffer = ByteBuffer.wrap(bytes);
+  // Initialize an array to store the float values
+  float[] floatValues = new float[floatLength];
+  // Read 4 float values from the buffer
+  for (int i = 0; i < floatLength; i++) {
+    floatValues[i] = buffer.getFloat();
+  }
+  return floatValues;
 }
