@@ -15,6 +15,8 @@ void setup() {
 void draw() {
   // Check if a client is available
   Client client = myServer.available();
+  // Clear the canvas
+  background(255);
   if (client != null) {
     // Read data from the client
     while (client.available() >= 8) { // Assuming 16 bytes for 2 float values (1 float = 4 bytes)
