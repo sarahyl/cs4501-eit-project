@@ -87,31 +87,3 @@ finally:
 cap.release()
 cv2.destroyAllWindows()
 # ser.close()
-
-import socket
-import struct
-import time
-
-# IP address and port of the Processing server
-HOST = '127.0.0.1'
-PORT = 5204
-
-# Create a TCP socket
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-try:
-    # Connect to the Processing server
-    client_socket.connect((HOST, PORT))
-    while True:
-        # Send a message to the Processing server
-        ## NOTE: In this case, we are sending 4 float values, you can change the number of values and the format as needed
-        float_values = [1.23, 2.34, 3.45, 4.56] # Sample Values
-        packed_data = struct.pack('!4f', *float_values) # The '4' represents the number of values to pack, 'f' represents the format (float), and the '!' is used to ensure network byte order (leave this one as is unless you NEED to change it).
-        client_socket.sendall(packed_data)
-        
-        # Add a small delay if needed
-        time.sleep(0.1)
-        
-finally:
-    # Close the connection when done
-    client_socket.close()
