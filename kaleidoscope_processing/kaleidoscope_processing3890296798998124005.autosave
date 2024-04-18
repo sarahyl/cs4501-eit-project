@@ -21,8 +21,7 @@ float yPos = 0;
 FloatList xPosList;
 FloatList yPosList;
 FloatList forceList;
-float color1;
-float color2;
+
 void setup() {
   size(640, 480); // Set canvas size to match webcam resolution
   
