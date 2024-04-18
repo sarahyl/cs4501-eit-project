@@ -32,8 +32,8 @@ cap = cv2.VideoCapture(0)
 def extract_fingertip_coordinates(landmarks):
     for i in range(len(landmarks.landmark)):
         if i == 8:  # Index finger tip landmark
-            x = float(landmarks.landmark[i].x * 640)  # Scale x coordinate
-            y = float(landmarks.landmark[i].y * 480)  # Scale y coordinate
+            x = float(landmarks.landmark[i].x * 1280)  # Scale x coordinate
+            y = float(landmarks.landmark[i].y * 960)  # Scale y coordinate
             return x, y
     return None, None
 try:
