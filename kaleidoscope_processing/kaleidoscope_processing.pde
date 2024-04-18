@@ -14,7 +14,7 @@ void setup() {
   
   // Start a server on port 5204
   myServer = new Server(this, PORT);
-  String clearPortName = Serial.list()[0];
+  String clearPortName = Serial.list()[0]; // Set to port with clear Arduino
   clearPort = new Serial(this, clearPortName, 9600);
 }
 
