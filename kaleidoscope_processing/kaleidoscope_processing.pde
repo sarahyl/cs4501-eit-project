@@ -21,7 +21,8 @@ float yPos = 0;
 FloatList xPosList;
 FloatList yPosList;
 FloatList forceList;
-
+int color1;
+int color2;
 void setup() {
   size(640, 480); // Set canvas size to match webcam resolution
   
@@ -87,8 +88,8 @@ void drawLine(float x1, float y1, float x2, float y2) {
         }
       }
   }
-  int color1=map(dx,-1000,1000,0,255);
-  int color2=map(dy,-1000,1000,0,255);
+  color1=map(dx,-1000,1000,0,255);
+  color2=map(dy,-1000,1000,0,255);
   // Set a thicker stroke weight
   strokeWeight(4); // Set thickness of the line
   // Draw a line from (x1, y1) to (x2, y2)
