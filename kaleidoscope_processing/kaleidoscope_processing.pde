@@ -6,11 +6,34 @@ int PORT = 5204;
 float[] previousCoords = new float[2]; // Previous fingertip coordinates
 float[] fingertipCoords = new float[2]; // Current fingertip coordinates
 
+import processing.serial.*;
+Serial myPort;
+String myString = null;
+int lf = 10;    // Linefeed in ASCII
+float ax = 0;
+float ay = 0;
+float dx = 0;
+float dy = 0;
+float force = 0;
+float xPos = 0;
+float yPos = 0;
+
+FloatList xPosList;
+FloatList yPosList;
+FloatList forceList;
+
 void setup() {
   size(640, 480); // Set canvas size to match webcam resolution
   
   // Start a server on port 5204
   myServer = new Server(this, PORT);
+  String portName = Serial.list()[1];  // find the right one from the print port list (see the console output). Your port might not be the first one on the list. 
+  myPort = new Serial(this, portName, 115200);  // open the serial port  
+
+  // Lists storing x/y positions and force 
+  xPosList = new FloatList();  
+  yPosList = new FloatList();
+  forceList = new FloatList();
 }
 
 void draw() {
@@ -35,16 +58,42 @@ void draw() {
       drawLine(width - previousCoords[0], previousCoords[1], width - fingertipCoords[0], fingertipCoords[1]); // Mirror horizontally
       drawLine(previousCoords[0], height - previousCoords[1], fingertipCoords[0], height - fingertipCoords[1]); // Mirror vertically
       drawLine(width - previousCoords[0], height - previousCoords[1], width - fingertipCoords[0], height - fingertipCoords[1]); // Mirror both horizontally and vertically
+ 
+  /*
+    xPos = xPos + dx;
+    yPos = yPos + dy;  
+
+    xPosList.append(xPos);
+    yPosList.append(yPos);  
+    forceList.append(force); 
+  */
     }
   }
 }
 
 void drawLine(float x1, float y1, float x2, float y2) {
+
+  while (myPort.available() > 0) {
+      myString = myPort.readStringUntil(lf);
+      if (myString != null) {
+        float[] nums = float(split(myString, ','));
+        if (nums.length == 3)
+        {
+          dx = nums[0];
+          dy = nums[1];
+          force=nums[2];
+          // TODO: You may want to set force from nums[] here.
+          // nums[2] has the force values
+        }
+      }
+  }
+  int color1=map(dx,-1000,1000,0,255);
+  int color2=map(dy,-1000,1000,0,255);
   // Set a thicker stroke weight
   strokeWeight(4); // Set thickness of the line
   // Draw a line from (x1, y1) to (x2, y2)
-  stroke(200, 200, 0); // Set line color
-  line(x1, y1, x2, y2); // Draw line
+  stroke(color1, color2, 0); // Set line color
+  line(x1, y1, x2, y2); // Draw line  
 }
 
 float[] decodeFloats(byte[] bytes, int floatLength) {
