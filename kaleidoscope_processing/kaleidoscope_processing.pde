@@ -1,7 +1,10 @@
 import processing.net.*;
 import java.nio.ByteBuffer;
+import processing.serial.*;
 
 Server myServer;
+Serial clearPort;
+int clearValue = 0;
 int PORT = 5204;
 float[] previousCoords = new float[2]; // Previous fingertip coordinates
 float[] fingertipCoords = new float[2]; // Current fingertip coordinates
@@ -11,6 +14,8 @@ void setup() {
   
   // Start a server on port 5204
   myServer = new Server(this, PORT);
+  String clearPortName = Serial.list()[0];
+  clearPort = new Serial(this, clearPortName, 9600);
 }
 
 void draw() {
@@ -35,6 +40,13 @@ void draw() {
       drawLine(width - previousCoords[0], previousCoords[1], width - fingertipCoords[0], fingertipCoords[1]); // Mirror horizontally
       drawLine(previousCoords[0], height - previousCoords[1], fingertipCoords[0], height - fingertipCoords[1]); // Mirror vertically
       drawLine(width - previousCoords[0], height - previousCoords[1], width - fingertipCoords[0], height - fingertipCoords[1]); // Mirror both horizontally and vertically
+
+      if(clearPort.available() > 0) {
+        clearValue = clearPort.read();
+        if(clearValue > 500) {
+          background(0);
+        }
+      }
     }
   }
 }
