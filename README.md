@@ -7,3 +7,5 @@ Example Project: https://projecthub.arduino.cc/maged_alex/using-mediapipe-to-con
 pip install mediapipe
 
 pip install pyserial
+
+float magnitude = sqrt(ax * ax + ay * ay + az * az); // Calculate magnitude of acceleration
