@@ -1,20 +1,27 @@
-void setup() {
-  Serial.begin(115200);
-  //Wire.begin();          // Initiating I2C Communication
-  //Wire.setClock(400000); // Setting up I2C Communication Speed
+#include "ICM_20948.h"
+ICM_20948_I2C myICM;
 
+void setup() {
+ Serial.begin(115200);
+ Wire.begin();
+ Wire.setClock(400000);
+ myICM.begin(Wire, 1);
 }
 
 void loop() {
-   //  while (!Serial.available()); check until there is data available
-   //  x = Serial.readString();  
-   // Serial.println(x);
-   //  delay(10);    
-  
-  if ( Serial.available() )   // When the IMU is ready to send data,
-  {
-    x = Serial.readString();  
-    Serial.println(x);
-    delay(10);           // Wait 10 milliseconds
-  }
+ // Getting IMU data
+ if ( myICM.dataReady() ) {
+   myICM.getAGMT();
+   float ax = myICM.accX();
+   float ay = myICM.accY();
+   int force = analogRead(0);
+
+   Serial.print(ax, 1);
+   Serial.print(", ");
+   Serial.print(ay, 1);
+   Serial.print(", ");
+   Serial.print(force);
+   Serial.println();
+ }
+ delay(20);
 }
