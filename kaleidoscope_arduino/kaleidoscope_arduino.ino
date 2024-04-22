@@ -9,19 +9,10 @@ void setup() {
 }
 
 void loop() {
- // Getting IMU data
- if ( myICM.dataReady() ) {
-   myICM.getAGMT();
-   float ax = myICM.accX();
-   float ay = myICM.accY();
-   int force = analogRead(0);
 
-   Serial.print(ax, 1);
-   Serial.print(", ");
-   Serial.print(ay, 1);
-   Serial.print(", ");
-   Serial.print(force);
+  int force = analogRead(0);
+  Serial.print(force);
    Serial.println();
- }
- delay(20);
+   delay(20);
+
 }
