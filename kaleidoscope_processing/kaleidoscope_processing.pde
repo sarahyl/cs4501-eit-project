@@ -2,17 +2,15 @@ import processing.net.*;
 import processing.serial.*;
 import java.nio.ByteBuffer;
 
-Serial myPort;
-String myString = null;
+Serial myPort1; // For COM15
+Serial myPort2; // For COM3
+String myString1 = null;
+String myString2 = null;
 int lf = 10;    // Linefeed in ASCII
-float ax = 0;
-float ay = 0;
 float dx = 0;
 float dy = 0;
+float dz = 0;
 float force = 0;
-float mForce = 0;
-float xPos = 0;
-float yPos = 0;
 
 FloatList xPosList;
 FloatList yPosList;
@@ -33,38 +31,55 @@ void setup() {
   
   //Arduino
   println(Serial.list());  // prints serial port list
-  String portName = Serial.list()[0];  // find the right one from the print port list (see the console output). Your port might not be the first one on the list. 
-  myPort = new Serial(this, portName, 115200);  // open the serial port  
+  String[] portList = Serial.list();
+  
+  // Initialize Serial objects for COM15 and COM3
+  for (int i = 0; i < portList.length; i++) {
+    if (portList[i].equals("COM15")) {
+      myPort1 = new Serial(this, portList[i], 115200);
+    }
+    if (portList[i].equals("COM3")) {
+      myPort2 = new Serial(this, portList[i], 115200);
+    }
+  }
+  
   xPosList = new FloatList();  
   yPosList = new FloatList();
   forceList = new FloatList();
-  
 }
 
 void draw() {
-  
-   while (myPort.available() > 0) {
-    myString = myPort.readStringUntil(lf);
-    if (myString != null) {
-      float[] nums = float(split(myString, ','));
-      if (nums.length == 3)
-      {
-        dx = nums[0];
-        dy = nums[1];
-        // TODO: You may want to set force from nums[] here.
-        // nums[2] has the force values
-        force = nums[2]; 
-         //println("dx value: " + dx); // Print the value of dx
-         //print("dx value: " + str(dx) + ", dy value: " + str(dy));
-         System.out.println("dx value: " + dx + ", dy value: " + dy + ", force value: " + force);
-         
+   //Read data from COM15 (Arduino connected to COM15)
+  while (myPort1 != null && myPort1.available() > 0) {
+    myString1 = myPort1.readStringUntil(lf);
+    if (myString1 != null) {
+      float[] nums = float(split(myString1, ','));
+      if (nums.length == 1) {
+        force = nums[0];
+        println("Force value from COM15: " + force);
+        
         if(force > 500) {
           background(255);
         }
-         
       }
     }
-  } 
+  }
+
+  // Read data from COM3 (Arduino connected to COM3)
+  while (myPort2 != null && myPort2.available() > 0) {
+    myString2 = myPort2.readStringUntil(lf);
+    if (myString2 != null) {
+      float[] nums = float(split(myString2, ','));
+      if (nums.length == 3) {
+        dx = nums[0];
+        dy = nums[1];
+        dz = nums[2];
+        //force = nums[2];
+        println("dx: " + dx + ", dy: " + dy + ", dz: " + dz);
+        
+      }
+    }
+  }
   
   // Check if a client is available
   Client client = myServer.available();
@@ -81,7 +96,6 @@ void draw() {
       fingertipCoords = decodeFloats(bytes, 2);
       
       // Draw line from previous position to current position
-      drawLine(previousCoords[0], previousCoords[1], fingertipCoords[0], fingertipCoords[1]);
       
       // Mirror across the canvas like a kaleidoscope
       drawLine(width - previousCoords[0], previousCoords[1], width - fingertipCoords[0], fingertipCoords[1]); // Mirror horizontally
@@ -95,17 +109,7 @@ void drawLine(float x1, float y1, float x2, float y2) {
   // Set a thicker stroke weight
   strokeWeight(4); // Set thickness of the line
   // Draw a line from (x1, y1) to (x2, y2)
-   
-  //Twist hand color change 
-  //if (dy < -200 && dy > -600){
-  //   stroke(255, 0, 0); // Set line color
-  //}
-  //if (dy < -700 && dy > -1200){
-  //   stroke(0, 255, 0); // Set line color 
-  //}
-  
-   line(x1, y1, x2, y2); // Draw line
-  
+  line(x1, y1, x2, y2); // Draw line
 }
 
 float[] decodeFloats(byte[] bytes, int floatLength) {
