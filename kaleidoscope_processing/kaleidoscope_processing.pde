@@ -26,7 +26,7 @@ float[] fingertipCoords = new float[2]; // Current fingertip coordinates
 
 void setup() {
   background(255);
-  size(640, 480); // Set canvas size to match webcam resolution
+  size(1280, 960); // Set canvas size to match webcam resolution
   
   // Start a server on port 5204
   myServer = new Server(this, PORT);
