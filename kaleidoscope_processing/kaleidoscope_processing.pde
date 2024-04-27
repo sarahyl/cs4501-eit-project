@@ -11,7 +11,9 @@ float dx = 0;
 float dy = 0;
 float dz = 0;
 float force = 0;
-
+float color1=0;
+float color2=0;
+float color3=0;
 FloatList xPosList;
 FloatList yPosList;
 FloatList forceList;
@@ -38,7 +40,7 @@ void setup() {
     if (portList[i].equals("COM15")) {
       myPort1 = new Serial(this, portList[i], 115200);
     }
-    if (portList[i].equals("COM3")) {
+    if (portList[i].equals("COM5")) { //"COM3"
       myPort2 = new Serial(this, portList[i], 115200);
     }
   }
@@ -65,21 +67,7 @@ void draw() {
     }
   }
 
-  // Read data from COM3 (Arduino connected to COM3)
-  while (myPort2 != null && myPort2.available() > 0) {
-    myString2 = myPort2.readStringUntil(lf);
-    if (myString2 != null) {
-      float[] nums = float(split(myString2, ','));
-      if (nums.length == 3) {
-        dx = nums[0];
-        dy = nums[1];
-        dz = nums[2];
-        //force = nums[2];
-        println("dx: " + dx + ", dy: " + dy + ", dz: " + dz);
-        
-      }
-    }
-  }
+
   
   // Check if a client is available
   Client client = myServer.available();
@@ -106,9 +94,33 @@ void draw() {
 }
 
 void drawLine(float x1, float y1, float x2, float y2) {
+    // Read data from COM3 (Arduino connected to COM3)
+  while (myPort2 != null && myPort2.available() > 0) {
+    myString2 = myPort2.readStringUntil(lf);
+    if (myString2 != null) {
+      float[] nums = float(split(myString2, ','));
+      if (nums.length == 3) {
+        dx = nums[0];
+        dy = nums[1];
+        dz = nums[2];
+        
+        println("dx: " + dx + ", dy: " + dy + ", dz: " + dz);
+        
+      }
+    }
+  }
+  dx=constrain(dx,-500,500);
+  dy=constrain(dy,-500,500);
+  dz=constrain(dz,-500,500);
+  
+  color1=map(dy,-500,500,200,0);
+  color2=map(dy,-500,500,200,0);
+  color3=map(dy,-500,500,0,255);
   // Set a thicker stroke weight
+ 
   strokeWeight(4); // Set thickness of the line
   // Draw a line from (x1, y1) to (x2, y2)
+  stroke(color1, color2, color3); // Set line color
   line(x1, y1, x2, y2); // Draw line
 }
 

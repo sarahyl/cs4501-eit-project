@@ -15,7 +15,6 @@ void loop() {
    float ax = myICM.accX();
    float ay = myICM.accY();
    float az = myICM.accZ();
-   int force = analogRead(0);
 
    Serial.print(ax, 1);
    Serial.print(", ");
