@@ -26,7 +26,7 @@ float[] fingertipCoords = new float[2]; // Current fingertip coordinates
 
 void setup() {
   background(255);
-  size(1280, 960); // Set canvas size to match webcam resolution
+  size(960, 720);  // Set canvas size to match webcam resolution
   
   // Start a server on port 5204
   myServer = new Server(this, PORT);
@@ -84,7 +84,8 @@ void draw() {
       fingertipCoords = decodeFloats(bytes, 2);
       
       // Draw line from previous position to current position
-      
+        drawLine(previousCoords[0], previousCoords[1], fingertipCoords[0], fingertipCoords[1]); // Mirror horizontally
+
       // Mirror across the canvas like a kaleidoscope
       drawLine(width - previousCoords[0], previousCoords[1], width - fingertipCoords[0], fingertipCoords[1]); // Mirror horizontally
       drawLine(previousCoords[0], height - previousCoords[1], fingertipCoords[0], height - fingertipCoords[1]); // Mirror vertically
